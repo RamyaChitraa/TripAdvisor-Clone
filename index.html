@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Tripadvisor — Full Mock</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --max-width:1200px;
+      --accent:#62eb76;
+      --muted:#6b7280;
+      --card-bg:#ffffff;
+      --gap:18px;
+      --img-h:150px;
+      --tile-h:200px;
+      --radius:10px;
+      --line:#e6edf0;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:#0d0d0d;background:#fff;line-height:1.4;
+    }
+    .wrap{max-width:var(--max-width);margin:0 auto;padding:20px;}
+
+    /* NAVBAR */
+    .navbar {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:15px 40px;border-bottom:1px solid #eee;
+    }
+    .navbar-left img{height:32px;}
+    .navbar-center{display:flex;gap:25px;font-weight:600;font-size:15px;}
+    .navbar-center a:hover{color:var(--accent);}
+    .navbar-right{display:flex;align-items:center;gap:12px;font-size:14px;}
+    .navbar-right img{width:32px;height:32px;border-radius:50%;}
+
+    /* MAIN */
+    .main{text-align:center;padding:50px 20px;}
+    .main h1{font-size:42px;margin-bottom:30px;color:#111111;}
+
+    .categories{
+      display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:30px;
+    }
+    .categories a{
+      font-weight:600;display:flex;align-items:center;gap:8px;
+      padding:8px 14px;border-radius:30px;color:#111;text-decoration:none;
+    }
+    .categories a.active,.categories a:hover{
+      background:#f2f7f5;color:var(--accent);
+    }
+
+    .search-box{
+      display:flex;align-items:center;justify-content:center;max-width:650px;
+      margin:0 auto;border:1px solid #ddd;border-radius:50px;padding:8px 14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    }
+    .search-box i{color:#888;margin-right:10px;}
+    .search-box input{flex:1;border:none;outline:none;font-size:15px;padding:10px;}
+    .search-box button{
+      background:var(--accent);border:none;border-radius:30px;padding:10px 24px;
+      font-weight:700;font-size:15px;color:#04281b;cursor:pointer;
+    }
+
+    /* HERO */
+    .hero{display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;
+      background:#de0659;padding:20px;border-radius:12px;margin:20px;}
+    .hero img{width:100%;height:100%;object-fit:cover;border-radius:12px;}
+    .hero-left{flex:1;position:relative;}
+    .hero-left button{
+      position:absolute;bottom:10px;left:10px;
+      background:#51a486;border:none;border-radius:20px;
+      padding:5px 12px;font-size:14px;cursor:pointer;
+    }
+    .hero-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:5px;}
+    .hero-right h2{font-size:28px;font-weight:bold;margin-bottom:16px;}
+    .hero-right p{margin-bottom:5px;font-size:16px;}
+    .hero-right button{
+      background:black;color:white;border:none;
+      padding:12px 24px;border-radius:12px;font-size:16px;cursor:pointer;
+    }
+
+    /* SECTIONS */
+    .section{padding:40px 20px;border-bottom:1px solid var(--line);}
+    .section .heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap;}
+    .section h2{font-size:22px;}
+    .muted{color:var(--muted);font-size:0.95rem;}
+
+    .interest-grid,.suggest-grid,.experience-grid{display:grid;gap:var(--gap);}
+    .interest-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+    .interest-tile{position:relative;border-radius:var(--radius);overflow:hidden;}
+    .interest-tile img{width:100%;height:var(--tile-h);object-fit:cover;display:block;}
+    .interest-label{
+      position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,0.55);
+      color:#fff;padding:8px 10px;border-radius:8px;font-weight:700;
+    }
+
+    .suggest-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+    .suggest-card{background:var(--card-bg);border-radius:10px;overflow:hidden;
+      border:1px solid var(--line);box-shadow:0 6px 18px rgba(15,23,36,0.04);
+      display:flex;flex-direction:column;}
+    .suggest-card img{width:100%;height:var(--img-h);object-fit:cover;display:block;}
+    .suggest-card .body{padding:12px;flex:1;display:flex;flex-direction:column;justify-content:space-between;}
+    .meta{display:flex;gap:8px;align-items:center;font-weight:700;color:#111;}
+    .badge{padding:4px 8px;border-radius:6px;background:#fff3a5;font-weight:800;font-size:0.85rem;color:#000;}
+
+    .experience-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+    .exp-card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;text-align:center;box-shadow:0 6px 18px rgba(15,23,36,0.03);}
+    .exp-card img{width:100%;height:130px;object-fit:cover;display:block;}
+    .exp-card .title{padding:12px;font-weight:700;}
+
+    /* Horizontal Scroll */
+    .hscroll-wrap{position:relative;padding:8px 0;}
+    .hscroll{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,1fr);
+      gap:16px;overflow-x:auto;padding:10px;scroll-snap-type:x mandatory;}
+    .hcard{background:#fff;border:1px solid var(--line);border-radius:10px;
+      overflow:hidden;box-shadow:0 6px 18px rgba(15,23,36,0.04);
+      min-width:260px;scroll-snap-align:center;}
+    .hcard img{width:100%;height:var(--img-h);object-fit:cover;display:block;}
+    .hcard .body{padding:10px;}
+    .scroll-btn{position:absolute;top:50%;transform:translateY(-50%);
+      width:36px;height:36px;border-radius:999px;border:1px solid var(--line);
+      background:#fff;display:grid;place-items:center;cursor:pointer;z-index:5;}
+    .scroll-left{left:4px;}
+    .scroll-right{right:4px;}
+
+    /* FOOTER */
+    footer{background:#f9f9f9;padding:40px 60px;font-size:14px;color:#333;}
+    footer h4{margin-bottom:12px;font-size:15px;}
+    footer ul{list-style:none;padding:0;margin:0;line-height:1.8;}
+    footer a{color:#333;text-decoration:none;font-size:0.95rem;}
+    footer hr{margin:30px 0;border:none;border-top:1px solid #ddd;}
+    .footer-note{margin-top:10px;color:var(--muted);font-size:0.85rem;}
+
+    /* small screens */
+    @media (max-width:700px){
+      .navbar{padding:10px;}
+      .main{padding:30px 12px;}
+      .hero{flex-direction:column;}
+      footer{padding:20px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" alt="Tripadvisor Logo">
+    </div>
+    <div class="navbar-center">
+      <a href="#">Discover</a>
+      <a href="#">Trips</a>
+      <a href="#">Review</a>
+      <a href="#">More</a>
+    </div>
+    <div class="navbar-right">
+      <i class="fa-solid fa-globe"></i>
+      <span>INR</span>
+      <img src="https://i.pravatar.cc/40" alt="Profile">
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1>Where to?</h1>
+    <div class="categories">
+      <a href="#" class="active"><i class="fa-solid fa-house"></i> Search All</a>
+      <a href="#"><i class="fa-solid fa-bed"></i> Hotels</a>
+      <a href="#"><i class="fa-solid fa-camera"></i> Things to Do</a>
+      <a href="#"><i class="fa-solid fa-utensils"></i> Restaurants</a>
+      <a href="#"><i class="fa-solid fa-plane"></i> Flights</a>
+      <a href="#"><i class="fa-solid fa-house-chimney"></i> Holiday Homes</a>
+    </div>
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Places to go, things to do, hotels...">
+      <button>Search</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <img src="https://picsum.photos/800/500?image=1050" alt="Kayaking">
+      <button>@Eddie J</button>
+    </div>
+    <div class="hero-right">
+      <h2>Find things to do <br> for everything you’re into</h2>
+        <p>Browse 400,000+ experiences and book with us.</p>
+        <button>Book now</button>
+    </div>
+  </section>
+
+  <!-- INTERESTS -->
+  <section class="section">
+    <div class="heading"><h2>Book the best part of your trip</h2><div class="muted">Outdoors, food, culture, Water and more</div></div>
+   <div class="interest-grid">
+      <div class="interest-tile"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80"><div class="interest-label">Outdoors</div></div>
+      <div class="interest-tile"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1400&auto=format"><div class="interest-label">Food</div></div>
+      <div class="interest-tile"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format"><div class="interest-label">Culture</div></div>
+      <div class="interest-tile"><img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1400&auto=format"><div class="interest-label">Water</div></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- SUGGESTIONS -->
+  <section class="section">
+    <h2>You might like these</h2>
+    <div class="suggest-grid">
+      <article class="suggest-card">
+        <img src="https://picsum.photos/600/400?image=1060" alt="Blue Electric Bike Tour">
+        <div class="body">
+          <div><div class="muted">Tours</div><h3>Blue Electric Bike Tour</h3></div>
+          <div class="meta"><span class="badge">BEST</span><span>4.8 • 980</span></div>
+        </div>
+      </article>
+
+      <article class="suggest-card">
+        <img src="https://picsum.photos/600/400?image=1043" alt="Fort Kochi Heritage Walk">
+        <div class="body">
+          <div><div class="muted">Walking Tour</div><h3>Fort Kochi Heritage Walk</h3></div>
+          <div class="meta"><span class="badge">BEST</span><span>4.9 • 1204</span></div>
+        </div>
+      </article>
+
+      <article class="suggest-card">
+        <img src="https://picsum.photos/600/400?image=1039" alt="Canoe/Kayak in Backwaters">
+        <div class="body">
+          <div><div class="muted">Adventure</div><h3>Canoe/Kayak in Backwaters</h3></div>
+          <div class="meta"><span class="badge">TOP</span><span>4.7 • 623</span></div>
+        </div>
+      </article>
+
+      <article class="suggest-card">
+        <img src="https://picsum.photos/600/400?image=1029" alt="Ancient Temple Visit">
+        <div class="body">
+          <div><div class="muted">Culture</div><h3>Ancient Temple Visit</h3></div>
+          <div class="meta"><span class="badge">TOP</span><span>4.6 • 812</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="section">
+    <div class="heading"><h2>Explore experiences near Coimbatore</h2><div class="muted">Popular local experiences</div></div>
+   <div class="experience-grid">
+      <div class="exp-card"><img src="https://picsum.photos/400/300?exp1"><div class="title">City Food Walk</div></div>
+      <div class="exp-card"><img src="https://picsum.photos/400/300?exp2"><div class="title">Tea Plantation Tour</div></div>
+      <div class="exp-card"><img src="https://picsum.photos/400/300?exp3"><div class="title">Cultural Evening</div></div>
+      <div class="exp-card"><img src="https://picsum.photos/400/300?exp4"><div class="title">Temple Walk</div></div>
+    </div></div>
+    </div>
+  </section>
+
+  <!-- LIVE SCROLL -->
+  <section class="section">
+    <div class="heading"><h2>Things to do — right now</h2><div class="muted">Live trending experiences</div></div>
+    <div class="hscroll-wrap">
+      <button class="scroll-btn scroll-left" id="leftBtn"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="hscroll" id="live-scroll" tabindex="0">
+        <!-- Use stable picsum images with specific image ids so they reliably load -->
+        <div class="hcard">
+          <img src="https://picsum.photos/600/400?image=1018" alt="Sorrento Coast Boat Tour" loading="lazy">
+          <div class="body"><h3>Sorrento Coast Boat Tour</h3><div class="muted">from <strong>₹9,640</strong></div></div>
+        </div>
+
+        <div class="hcard">
+          <img src="https://picsum.photos/600/400?image=1024" alt="Dolphin & Whale Watching" loading="lazy">
+          <div class="body"><h3>Dolphin & Whale Watching</h3><div class="muted">from <strong>₹6,040</strong></div></div>
+        </div>
+
+        <div class="hcard">
+          <img src="https://picsum.photos/600/400?image=1032" alt="Yellowstone Day Tour" loading="lazy">
+          <div class="body"><h3>Yellowstone Day Tour</h3><div class="muted">from <strong>₹9,387</strong></div></div>
+        </div>
+
+        <div class="hcard">
+          <img src="https://picsum.photos/600/400?image=1038" alt="Whitewater Rafting" loading="lazy">
+          <div class="body"><h3>Whitewater Rafting</h3><div class="muted">from <strong>₹7,240</strong></div></div>
+        </div>
+      </div>
+      <button class="scroll-btn scroll-right" id="rightBtn"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+   <!-- FOOTER -->
+<footer style="background:#f9f9f9; padding:40px 60px; font-family:Arial, sans-serif; font-size:14px; color:#333;">
+  <div style="display:flex; justify-content:space-between; flex-wrap:wrap; max-width:1200px; margin:auto;">
+
+    <!-- Left Links -->
+    <div style="display:flex; gap:60px; flex-wrap:wrap;">
+
+      <div>
+        <h4 style="margin-bottom:12px; font-size:15px;">About Tripadvisor</h4>
+        <ul style="list-style:none; padding:0; margin:0; line-height:1.8;">
+          <li><a href="#" style="color:#333; text-decoration:none;">About Us</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Press</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Resources and Policies</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Careers</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Trust & Safety</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Contact us</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Tripadvisor Technology Blog</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:12px; font-size:15px;">Explore</h4>
+        <ul style="list-style:none; padding:0; margin:0; line-height:1.8;">
+          <li><a href="#" style="color:#333; text-decoration:none;">Write a review</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Add a Place</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Join</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Travellers' Choice</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Help Centre</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Travel Stories</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:12px; font-size:15px;">Do Business With Us</h4>
+        <ul style="list-style:none; padding:0; margin:0; line-height:1.8;">
+          <li><a href="#" style="color:#333; text-decoration:none;">Owners & DMO/CVB</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Business Advantage</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Sponsored Placements</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Access our Content API</a></li>
+        </ul>
+        <h4 style="margin-top:20px; margin-bottom:12px; font-size:15px;">Get The App</h4>
+        <ul style="list-style:none; padding:0; margin:0; line-height:1.8;">
+          <li><a href="#" style="color:#333; text-decoration:none;">iPhone App</a></li>
+          <li><a href="#" style="color:#333; text-decoration:none;">Android App</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div style="min-width:220px;">
+      <h4 style="margin-bottom:12px; font-size:15px;">Tripadvisor Sites</h4>
+      <a href="#" style="color:#333; text-decoration:none;">Book tours and attraction tickets on <strong>Viator</strong></a>
+    </div>
+  </div>
+
+  <hr style="margin:30px 0; border:none; border-top:1px solid #ddd;">
+
+  <!-- Bottom Bar -->
+  <div style="max-width:1200px; margin:auto; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:20px;">
+
+    <!-- Left with Logo + Copyright -->
+    <div style="flex:1; min-width:250px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <img src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_logoset_solid_green.svg" alt="Tripadvisor Logo" style="width:28px; height:auto;">
+        <p style="margin:0; font-size:13px;">© 2025 Tripadvisor LLC All rights reserved.</p>
+      </div>
+      <p style="margin:8px 0 0; font-size:13px; line-height:1.6;">
+        <a href="#" style="color:#333; margin-right:10px; text-decoration:none;">Terms of Use</a>
+        <a href="#" style="color:#333; margin-right:10px; text-decoration:none;">Privacy and Cookies Statement</a>
+        <a href="#" style="color:#333; margin-right:10px; text-decoration:none;">Cookie consent</a>
+        <a href="#" style="color:#333; margin-right:10px; text-decoration:none;">Site Map</a>
+        <a href="#" style="color:#333; margin-right:10px; text-decoration:none;">How the site works</a>
+        <a href="#" style="color:#333; text-decoration:none;">Contact us</a>
+      </p>
+    </div>
+
+    <!-- Right with Dropdown + Social -->
+    <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+      <select style="padding:5px 8px; font-size:13px;">
+        <option>₹ INR</option>
+        <option>$ USD</option>
+      </select>
+      <select style="padding:5px 8px; font-size:13px;">
+        <option>India</option>
+        <option>United States</option>
+      </select>
+
+      <div style="display:flex; gap:12px; font-size:18px; margin-left:10px;">
+        <i class="fa-brands fa-facebook"></i>
+        <i class="fa-brands fa-x-twitter"></i>
+        <i class="fa-brands fa-pinterest"></i>
+        <i class="fa-brands fa-instagram"></i>
+        <i class="fa-brands fa-youtube"></i>
+        <i class="fa-brands fa-tiktok"></i>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+ 
+          
+         
