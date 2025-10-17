@@ -39,10 +39,8 @@ tripadvisor-clone/
 
 Clone the repository:
 
-git clone https://github.com/yourusername/tripadvisor-clone.git
-
-
-Open index.html in your browser.
+🔗 GitHub Repo: https://github.com/RamyaChitraa/TripAdvisor-Clone.git
+🌍 Live Website:
 
 💡 Future Improvements
 
