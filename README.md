@@ -40,7 +40,6 @@ tripadvisor-clone/
 Clone the repository:
 
 🔗 GitHub Repo: https://github.com/RamyaChitraa/TripAdvisor-Clone.git
-🌍 Live Website: https://trip-advisor-clone-i1xw.vercel.app/
 
 💡 Future Improvements
 
